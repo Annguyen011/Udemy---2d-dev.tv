@@ -584,7 +584,7 @@ MonoBehaviour:
   m_Intensity: 1
   m_LightVolumeIntensity: 1
   m_LightVolumeIntensityEnabled: 0
-  m_ApplyToSortingLayers: 0000000089b5f33a17b73c7c710a93e81f6f0823
+  m_ApplyToSortingLayers: 0000000089b5f33a17b73c7c710a93e81f6f08238328772c
   m_LightCookieSprite: {fileID: 0}
   m_DeprecatedPointLightCookieSprite: {fileID: 0}
   m_LightOrder: 0
@@ -6750,6 +6750,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _bulletSpawnPoint: {fileID: 710606986}
   _bulletPrefab: {fileID: -5611149099131491127, guid: 9dca18bc1fee05d488922a753a58ca8d, type: 3}
+  gunFireCD: 0.5
 --- !u!1 &1481284113
 GameObject:
   m_ObjectHideFlags: 3
