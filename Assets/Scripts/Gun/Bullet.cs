@@ -9,6 +9,7 @@ public class Bullet : MonoBehaviour
 
     private Vector2 _fireDirection;
 
+    private Gun gun;
     private Rigidbody2D _rigidBody;
 
     private void Awake()
@@ -18,23 +19,36 @@ public class Bullet : MonoBehaviour
 
     private void Update()
     {
-        
+
     }
     private void FixedUpdate()
     {
         _rigidBody.velocity = _fireDirection * _moveSpeed;
+        if(Vector2.Distance(gun.transform.position, transform.position) > 70f)
+        {
+            print("Pool active");
+            gun.ReleaseBulletFromPool(this);
+        }
     }
 
-    public void Init(Vector2 bulletSpawnPos, Vector2 mousePos)
+    public void Init(Gun gun, Vector2 bulletSpawnPos, Vector2 mousePos)
     {
+        this.gun = gun;
+        transform.position = bulletSpawnPos;
+
         _fireDirection = (mousePos - bulletSpawnPos).normalized;
     }
-    private void OnTriggerEnter2D(Collider2D other) {
-        if (!other.CompareTag("Enemy")) return;
-        Health health = other.gameObject.GetComponent<Health>();
-        health?.TakeDamage(_damageAmount);
-        Destroy(this.gameObject);
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.CompareTag("Enemy"))
+        {
+            Health health = other.gameObject.GetComponent<Health>();
+            health?.TakeDamage(_damageAmount);
+            gun.ReleaseBulletFromPool(this);
+            
+        }
+        //Destroy(this.gameObject);
     }
 
-   
+
 }
