@@ -6,18 +6,26 @@ public class PlayerController : MonoBehaviour
 {
     public static PlayerController Instance;
 
+    [SerializeField] private Transform feetTranform;
+    [SerializeField] private Vector2 groundCheck;
+    [SerializeField] private LayerMask groundLayer;
     [SerializeField] private float _moveSpeed = 5f;
     [SerializeField] private float _jumpStrength = 7f;
 
+    private PlayerInput _playerInput;
+    private FrameInput _frameInput;
     private bool _isGrounded = false;
-    private Vector2 _movement;
+    private Movement _movement;
 
     private Rigidbody2D _rigidBody;
 
-    public void Awake() {
+    public void Awake()
+    {
         if (Instance == null) { Instance = this; }
 
         _rigidBody = GetComponent<Rigidbody2D>();
+        _playerInput = GetComponent<PlayerInput>();
+        _frameInput = GetComponent<FrameInput>();
     }
 
     private void Update()
@@ -27,26 +35,17 @@ public class PlayerController : MonoBehaviour
         HandleSpriteFlip();
     }
 
-    private void FixedUpdate() {
+    private void FixedUpdate()
+    {
         Move();
     }
 
-    private void OnCollisionEnter2D(Collision2D other)
+    private bool CheckGround()
     {
-        if (other.gameObject.layer == LayerMask.NameToLayer("Ground"))
-        {
-            _isGrounded = true;
-        }
-    }
+        Collider2D isGround = Physics2D.OverlapBox(feetTranform.position, groundCheck, 0f, groundLayer);
+        return isGround;
 
-    private void OnCollisionExit2D(Collision2D other)
-    {
-        if (other.gameObject.layer == LayerMask.NameToLayer("Ground"))
-        {
-            _isGrounded = false;
-        }
     }
-
     public bool IsFacingRight()
     {
         return transform.eulerAngles.y == 0;
@@ -54,18 +53,21 @@ public class PlayerController : MonoBehaviour
 
     private void GatherInput()
     {
-        float moveX = Input.GetAxis("Horizontal");
-        _movement = new Vector2(moveX * _moveSpeed, _rigidBody.velocity.y);
+        //float moveX = Input.GetAxis("Horizontal");
+        //_movement = new Vector2(moveX * _moveSpeed, _rigidBody.velocity.y);
+
+        _frameInput = _playerInput.FrameInput;
     }
 
-    private void Move() {
-
-        _rigidBody.velocity = _movement;
+    private void Move()
+    {
+        _movement.SetCurDir(_frameInput.move.x);
     }
 
     private void Jump()
     {
-        if (Input.GetKeyDown(KeyCode.Space) && _isGrounded) {
+        if (_frameInput.Jump && CheckGround())
+        {
             _rigidBody.AddForce(Vector2.up * _jumpStrength, ForceMode2D.Impulse);
         }
     }
@@ -82,5 +84,5 @@ public class PlayerController : MonoBehaviour
         {
             transform.eulerAngles = new Vector3(0f, 0f, 0f);
         }
-    } 
+    }
 }
